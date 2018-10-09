@@ -39,4 +39,45 @@
   // Collapse the navbar when page is scrolled
   $(window).scroll(navbarCollapse);
 
+
+    $.fn.serializeObject = function()
+    {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+    var $form = $('form#email-form'),
+        url = 'https://script.google.com/macros/s/AKfycbyAakMpk2Jy0yJoqzFw7dV9aGt-qIkat58zP3dEXng5487-49g2/exec';
+
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    $('#submit-form').on('click', function(e) {
+        var email = $("#email-input").val();
+        console.log(email);
+        if (validateEmail(email)) {
+            e.preventDefault();
+            var jqxhr = $.ajax({
+                url: url,
+                method: "GET",
+                dataType: "json",
+                data: $form.serializeObject()
+            })
+            $("#email-input").val("Thank you, we'll be in touch!");
+        }
+    })
+
 })(jQuery); // End of use strict
